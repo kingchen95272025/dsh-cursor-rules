@@ -1,0 +1,10 @@
+# Marketplace entry for https://github.com/awesome-dsh-plugin/awesome-dsh-plugin
+# Copy this file to data/plugins/kingchen95272025__dsh-cursor-rules.yml in your fork
+# and open a pull request. Do not edit the repository's README by hand.
+url: https://github.com/kingchen95272025/dsh-cursor-rules
+name: kingchen95272025/dsh-cursor-rules
+category: agi
+description:
+  en: Loads .cursor/rules mdc files into the agent context with Cursor's four rule types, and adds a panel for reading and toggling each rule.
+  zh: 把 .cursor/rules 下的 mdc 规则按 Cursor 的四类语义载入 Agent 上下文，并提供查看与开关规则的面板。
+icon: https://raw.githubusercontent.com/kingchen95272025/dsh-cursor-rules/main/assets/icon-180.png

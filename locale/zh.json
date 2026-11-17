@@ -1,0 +1,7 @@
+{
+  "meta": {
+    "title": "Cursor 规则",
+    "description": "把工作区的 .cursor/rules/*.mdc 按 Cursor 的四类规则语义载入 Agent 上下文，并提供一个查看与开关规则的面板。alwaysApply 规则在会话开始时注入；带 globs 的规则在 Agent 读写到匹配文件后追加；只写了 description 的规则进入按需目录。规则来自本地磁盘，注入内容会作为会话的一部分发给模型，不会上传到别处。关闭该 bundle 后注入与侧边栏按钮一并停止。",
+    "detail": "README.zh.md"
+  }
+}

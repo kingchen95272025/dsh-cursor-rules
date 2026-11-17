@@ -1,0 +1,7 @@
+{
+  "meta": {
+    "title": "Cursor rules",
+    "description": "Loads the workspace's .cursor/rules/*.mdc files into the agent context with Cursor's four rule types, and adds a panel for reading and toggling them. Rules marked alwaysApply are injected at the start of a session; rules with globs are added after the agent reads or edits a matching file; rules with only a description are offered on demand. The files are read from disk, and the injected rules become part of the conversation sent to the model; nothing is uploaded. Turning the bundle off stops both the injection and the sidebar button.",
+    "detail": "README.md"
+  }
+}
