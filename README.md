@@ -40,7 +40,7 @@ From the DSH plugin market, search for **Cursor rules** and install the bundle.
 From this repository:
 
 ```sh
-dsh plugin add github:kingchen95272025/dsh-cursor-rules
+dsh plugin add github:kingchen95272025/dsh-cursor-rules   # add --profile <name> for a non-default profile
 ```
 
 The package is a bundle: `package.json` declares `dsh.bundle.patch`, and `cordis.patch.yml` inserts the
@@ -121,23 +121,28 @@ The test builds its own `.cursor/rules` fixture in the system temp directory, so
 Host half, against a running profile:
 
 ```sh
-curl -s "http://127.0.0.1:19387/cursor-rules/rules?sessionId=<sessionId>" | head -c 400
+curl -s "http://127.0.0.1:<port>/cursor-rules/rules?sessionId=<sessionId>" | head -c 400
 ```
 
 The `version` field in the response is the plugin code version — use it to tell which build the running
-process loaded.
+process loaded. For 1.0.0 the route answers `200` and the rules the session is already following appear in
+the payload.
 
-Browser half — the desktop GUI is served from the custom protocol `dsh-app://app`, and `curl http://127.0.0.1:19387/`
-answers `401 dsh web authentication required`, so a plain `curl` cannot tell whether the browser half
-loaded. Read the live slot tree instead (requires an open GUI page):
+`dsh web` prints its URL on start (default port 19387); the desktop app picks another port.
+
+Browser half — the desktop GUI is served from the custom protocol `dsh-app://app`, and
+`curl http://127.0.0.1:<port>/` answers `401 dsh web authentication required`, so a plain `curl` cannot tell
+whether the browser half loaded. Check the slots in Settings → Plugin Manager, or read the live slot tree
+where the platform exposes one (`cordis_inspect_query` with `provider: "Slots"`, `method: "listSubTree"`):
 
 ```
-cordis_inspect_query(platform="client", provider="Slots", method="listSubTree",
-                     input={"root": "settings.section"})
+input={"root": "settings.section"}     # expect {"id":"cursor-rules","order":30,"active":true}
+input={"root": "sidebar.footer.action"}  # expect {"id":"cursor-rules","order":50,"active":true}
 ```
 
-Expect `{"id":"cursor-rules","order":30,"active":true}`, and `{"id":"cursor-rules","order":50,"active":true}`
-under `sidebar.footer.action`.
+Registration uses `ctx.inject(['webServer'], …)` rather than a one-shot `ctx.get('webServer')`: on a cold
+start `apply` can run before `webServer` is ready, and the one-shot form silently skipped route
+registration, which showed up as a 404 after a restart. Keep that form if you change the code.
 
 ## Known trade-offs
 

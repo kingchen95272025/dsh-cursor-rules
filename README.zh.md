@@ -37,7 +37,7 @@
 在 DSH 插件市场搜索「Cursor 规则」安装 bundle；或在命令行从仓库安装：
 
 ```sh
-dsh plugin add github:kingchen95272025/dsh-cursor-rules
+dsh plugin add github:kingchen95272025/dsh-cursor-rules   # 非默认 profile 加 --profile <名称>
 ```
 
 本包是标准 bundle：`package.json` 声明 `dsh.bundle.patch`，`cordis.patch.yml` 插入 `dsh-cursor-rules` 行；宿主半边是包主入口，`dsh.client` 声明让 Web 端加载 `./client` 作为浏览器半边。无构建、无安装脚本。
@@ -119,38 +119,24 @@ npm test          # 48 项断言：frontmatter、glob、发现、选择、注入
 宿主半边（对着运行中的 profile）：
 
 ```sh
-curl -s "http://127.0.0.1:19387/cursor-rules/rules?sessionId=<sessionId>" | head -c 400
+curl -s "http://127.0.0.1:<端口>/cursor-rules/rules?sessionId=<sessionId>" | head -c 400
 ```
 
-返回 JSON 即挂载成功。响应里的 `version` 字段是插件代码版本——**用它判断当前进程跑的是哪一版代码**。
+返回 JSON 即挂载成功，`version` 字段是插件代码版本——**用它判断当前进程跑的是哪一版代码**。1.0.0 上该路由返回 `200`，本会话正在遵守的用户级规则会出现在返回的规则列表里。
 
-浏览器半边：桌面版 GUI 的页面源是自定义协议 `dsh-app://app`，`curl http://127.0.0.1:19387/` 只会返回
-`401 dsh web authentication required`，**不能用 curl 判断浏览器半边是否加载**。改用 DSH 自带的 Slot 检查器读实况槽位树（需要 GUI 页面在线）：
+`dsh web` 启动时会打印 URL（默认端口 19387），桌面版应用用的是另一个端口。
+
+浏览器半边：桌面版 GUI 的页面源是自定义协议 `dsh-app://app`，`curl http://127.0.0.1:<端口>/` 只会返回
+`401 dsh web authentication required`，**不能用 curl 判断浏览器半边是否加载**。可在「设置 → 插件管理」里
+直接看这两处座位，或用平台暴露的实况槽位树（`cordis_inspect_query`，`provider: "Slots"`、`method: "listSubTree"`）核对：
 
 ```
-cordis_inspect_query(platform="client", provider="Slots", method="listSubTree",
-                     input={"root": "settings.section"})
+input={"root": "settings.section"}       # 期望 {"id":"cursor-rules","order":30,"active":true}
+input={"root": "sidebar.footer.action"}  # 期望 {"id":"cursor-rules","order":50,"active":true}
 ```
 
-期望看到 `{"id":"cursor-rules","order":30,"active":true}`；`sidebar.footer.action` 下期望
-`{"id":"cursor-rules","order":50,"active":true}`。
-
-### 冷启动必须单独验一次
-
-本插件曾出现「热装能用、重启后 404」的假象：冷启动时插件 `apply` 可能早于 `webServer` 就绪。只验证热挂载是不够的，用一个隔离 profile 验一次真正的冷启动（不影响 desktop）：
-
-```sh
-BIN="/Applications/DeepSeek Harness.app/Contents/Resources/app.asar/dsh/node_modules/@deepseek-ai/dsh/lib/bin.js"
-NODE_WRAP="/Applications/DeepSeek Harness.app/Contents/Resources/runtime/bin/node"
-export DSH_DESKTOP_NODE_EXECUTABLE="/Applications/DeepSeek Harness.app/Contents/MacOS/DeepSeek Harness"
-
-# 从 web 模板初始化一次性 profile（启动后 Ctrl-C 退出即可）
-"$NODE_WRAP" "$BIN" --profile cursorrules-check --from-default-profile web --no-open --port 3081
-# 装插件后再次冷启动
-"$NODE_WRAP" "$BIN" --profile cursorrules-check --no-open --port 3081
-curl -s http://127.0.0.1:3081/cursor-rules/rules | head -c 200   # 期望 200 且 version 为当前版本
-rm -rf "$DSH_HOME/profiles/cursorrules-check"                    # 收尾
-```
+路由注册用 `ctx.inject(['webServer'], …)` 而不是一次性 `ctx.get('webServer')`：冷启动时 `apply` 可能早于
+`webServer` 就绪，一次性写法会静默跳过注册，表现为重启后 404。改动这段代码时请保留该写法。
 
 ## 实现结构
 
