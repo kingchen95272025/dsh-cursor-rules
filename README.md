@@ -13,7 +13,7 @@
 - **Same semantics as Cursor.** A rule's frontmatter decides when it enters the context, not the file name.
 - **Nothing new to learn.** If a repository already carries `.cursor/rules`, the agent follows it without you pasting rules into prompts.
 - **Zero third-party dependencies.** Frontmatter parsing and glob matching are implemented inside the package, so the bundle is self-contained.
-- **Two UI surfaces.** A **Cursor rules** button at the bottom of the sidebar opens a panel, and Settings has a full page listing every rule with its frontmatter, body, and switch.
+- **Two UI surfaces.** A **Cursor rules** row in the sidebar's global panel list opens a full-main-panel page, and Settings has a section with the same list — every rule with its frontmatter, body, and switch.
 
 ## Rule types
 
@@ -125,7 +125,7 @@ curl -s "http://127.0.0.1:<port>/cursor-rules/rules?sessionId=<sessionId>" | hea
 ```
 
 The `version` field in the response is the plugin code version — use it to tell which build the running
-process loaded. For 1.0.0 the route answers `200` and the rules the session is already following appear in
+process loaded. For 1.1.0 the route answers `200` and the rules the session is already following appear in
 the payload.
 
 `dsh web` prints its URL on start (default port 19387); the desktop app picks another port.
@@ -136,8 +136,9 @@ whether the browser half loaded. Check the slots in Settings → Plugin Manager,
 where the platform exposes one (`cordis_inspect_query` with `provider: "Slots"`, `method: "listSubTree"`):
 
 ```
-input={"root": "settings.section"}     # expect {"id":"cursor-rules","order":30,"active":true}
-input={"root": "sidebar.footer.action"}  # expect {"id":"cursor-rules","order":50,"active":true}
+input={"root": "settings.section"}    # expect {"id":"cursor-rules","order":30,"active":true}
+input={"root": "sidebar.panellist"}    # expect {"id":"cursor-rules","order":30,"active":true}
+input={"root": "main"}                 # expect a "cursor-rules" key registered
 ```
 
 Registration uses `ctx.inject(['webServer'], …)` rather than a one-shot `ctx.get('webServer')`: on a cold
@@ -168,7 +169,7 @@ registration, which showed up as a 404 after a restart. Keep that form if you ch
 | --- | --- |
 | `lib/rules.js` | Rule engine (pure logic, no dependencies): frontmatter parsing, glob compilation and matching, rule discovery, four-type selection, incremental injection planning and rendering |
 | `lib/index.js` | Host half (Cordis plugin): `agent/pre-step` injection, `tools/result` and `fs/observed` touch collection, panel JSON routes on `ctx.webServer`, switch persistence |
-| `lib/client.js` | Browser half (hand-written, no build): `window.__ModuleLoader__.load({ id, factory })`, registering the `sidebar.footer.action` and `settings.section` slots |
+| `lib/client.js` | Browser half (hand-written, no build): `window.__ModuleLoader__.load({ id, factory })`, registering the `sidebar.panellist` row, the matching `main` panel, and the `settings.section` seat |
 | `cordis.patch.yml` | Bundle patch: inserts the `dsh-cursor-rules` row |
 | `locale/{en,zh}.json` | Plugin Manager title, description, and detail document |
 | `test/smoke.mjs` | Portable smoke test (48 assertions) over a self-built fixture |
@@ -178,7 +179,7 @@ registration, which showed up as a 404 after a restart. Keep that form if you ch
 - `@deepseek-ai/dsh-agent-instructions` — a workspace instruction injector; this plugin follows its
   conventions (own `source`, verbatim bodies, escaped frame tags, incremental delivery).
 - `@deepseek-ai/dsh-client-ui-skill` and `@deepseek-ai/dsh-client-ui-cordis` — examples of hand-written
-  client bundles, `ctx.slots.inject` seat registration, and sidebar footer buttons.
+  client bundles, `ctx.slots.inject` seat registration, and sidebar panel entries.
 
 ## License
 

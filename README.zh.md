@@ -11,7 +11,7 @@
 
 - **一句话**：装上本插件后，DSH 会像 Cursor 一样读取 `.cursor/rules` 下的 `.mdc` 规则并遵守它们，不必再在提示词里手动 @ 规则文件。
 - **语义完全对齐 Cursor**：`alwaysApply` / `globs` / `description` 三要素决定一条规则何时进入上下文，文件名不参与判断。
-- **两处 UI**：侧边栏底部「Cursor 规则」按钮（浮层）与设置面板里的「Cursor 规则」整页，可查看每条规则的 frontmatter、正文与开关状态。
+- **两处 UI**：左栏导航的「Cursor 规则」行（占满主面板的整页）与设置面板里的「Cursor 规则」分节，可查看每条规则的 frontmatter、正文与开关状态。
 - **零第三方依赖**：frontmatter 解析与 glob 匹配都在插件内自实现，bundle 自洽运行，无构建步骤。
 
 ## 规则语义（与 Cursor 一致）
@@ -103,8 +103,8 @@ The following Cursor rules are available on demand. Read the rule file when the 
 
 ### 2. 面板（浏览器半边）
 
-- **侧边栏底部按钮**：点击打开浮层，列出全部规则、类型标签、globs、描述与开关。
-- **设置面板 → Cursor 规则**：同样的列表以整页呈现。
+- **左栏导航 → Cursor 规则**：`sidebar.panellist` 的行（同一 id 寻址 `main` 座位的整页），列出全部规则、类型标签、globs、描述与开关。
+- **设置面板 → Cursor 规则**：同一套列表以分节形式复用。
 - 点「查看」会按需拉取该规则的完整正文并渲染 Markdown。
 - 关闭某条规则后，它不再进入注入集合（Always 与 Auto 都受影响）。
 
@@ -122,7 +122,7 @@ npm test          # 48 项断言：frontmatter、glob、发现、选择、注入
 curl -s "http://127.0.0.1:<端口>/cursor-rules/rules?sessionId=<sessionId>" | head -c 400
 ```
 
-返回 JSON 即挂载成功，`version` 字段是插件代码版本——**用它判断当前进程跑的是哪一版代码**。1.0.0 上该路由返回 `200`，本会话正在遵守的用户级规则会出现在返回的规则列表里。
+返回 JSON 即挂载成功，`version` 字段是插件代码版本——**用它判断当前进程跑的是哪一版代码**。1.1.0 上该路由返回 `200`，本会话正在遵守的用户级规则会出现在返回的规则列表里。
 
 `dsh web` 启动时会打印 URL（默认端口 19387），桌面版应用用的是另一个端口。
 
@@ -131,8 +131,9 @@ curl -s "http://127.0.0.1:<端口>/cursor-rules/rules?sessionId=<sessionId>" | h
 直接看这两处座位，或用平台暴露的实况槽位树（`cordis_inspect_query`，`provider: "Slots"`、`method: "listSubTree"`）核对：
 
 ```
-input={"root": "settings.section"}       # 期望 {"id":"cursor-rules","order":30,"active":true}
-input={"root": "sidebar.footer.action"}  # 期望 {"id":"cursor-rules","order":50,"active":true}
+input={"root": "settings.section"}   # 期望 {"id":"cursor-rules","order":30,"active":true}
+input={"root": "sidebar.panellist"}   # 期望 {"id":"cursor-rules","order":30,"active":true}
+input={"root": "main"}                # 期望注册了 "cursor-rules" 这个 key
 ```
 
 路由注册用 `ctx.inject(['webServer'], …)` 而不是一次性 `ctx.get('webServer')`：冷启动时 `apply` 可能早于
@@ -144,7 +145,7 @@ input={"root": "sidebar.footer.action"}  # 期望 {"id":"cursor-rules","order":5
 | --- | --- |
 | `lib/rules.js` | 规则引擎（纯逻辑、零依赖）：frontmatter 解析、glob 编译与匹配、规则发现、四类规则选择、增量注入计划与渲染 |
 | `lib/index.js` | 宿主半边（Cordis 插件）：`agent/pre-step` 注入、`tools/result` 与 `fs/observed` 触达采集、`ctx.webServer` 上的面板 JSON 接口、开关状态持久化 |
-| `lib/client.js` | 浏览器半边（手写、无构建）：`window.__ModuleLoader__.load({ id, factory })`，注册 `sidebar.footer.action` 与 `settings.section` 两处 UI |
+| `lib/client.js` | 浏览器半边（手写、无构建）：`window.__ModuleLoader__.load({ id, factory })`，注册 `sidebar.panellist` 行、配套的 `main` 面板与 `settings.section` 分节 |
 | `cordis.patch.yml` | bundle patch：插入 `dsh-cursor-rules` 行 |
 | `locale/{en,zh}.json` | Plugin Manager 的标题、描述与详情文档 |
 | `test/smoke.mjs` | 自带 fixture 的可移植冒烟测试（48 项断言） |
@@ -176,7 +177,7 @@ agent/pre-step (waterfall)
 ## 参考实现
 
 - `@deepseek-ai/dsh-agent-instructions` —— 同为工作区指令注入器，本插件沿用其「source 自有 + 正文逐字 + 框标签转义 + 增量投递」约定。
-- `@deepseek-ai/dsh-client-ui-skill` / `@deepseek-ai/dsh-client-ui-cordis` —— 客户端半边手写 bundle、`ctx.slots.inject` 座位注册与侧边栏底部按钮的范例。
+- `@deepseek-ai/dsh-client-ui-skill` / `@deepseek-ai/dsh-client-ui-cordis` —— 客户端半边手写 bundle、`ctx.slots.inject` 座位注册与侧边栏入口的范例。
 
 ## 许可
 
