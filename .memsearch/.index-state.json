@@ -1,0 +1,18 @@
+{
+  "collection": "ms_dsh_cursor_rules_48d7ed57",
+  "failed_files": [],
+  "indexed_chunks": 2,
+  "indexed_files": 1,
+  "last_completed_at": "2026-11-17T14:33:24.052688Z",
+  "last_started_at": "2026-11-17T14:31:29.341493Z",
+  "last_success_at": "2026-11-17T14:33:24.052688Z",
+  "milvus_uri": "~/.memsearch/milvus.db",
+  "operation": "index",
+  "paths": [
+    "/Users/chenkangxi/Code/tools/dsh-cursor-rules/.memsearch/memory"
+  ],
+  "schema_version": 1,
+  "status": "ok",
+  "total_files": 1,
+  "updated_at": "2026-11-17T14:33:24.052688Z"
+}
