@@ -194,7 +194,9 @@ fingerprint), a `catalogDigest`, and a `skillDigest`, so that:
 ## Verify
 
 ```sh
-npm test          # 70 assertions: frontmatter, glob, discovery, selection, injection, JSONC, MCP, skill catalog, switches
+npm test          # 70 assertions + host wiring test (see below)
+npm run test:rules  # data layer only: frontmatter, glob, discovery, selection, injection, JSONC, MCP, skill catalog, switches
+npm run test:host   # host wiring only: routes, cursor_skill tool, state file, MCP mount, injection timing
 ```
 
 The test builds its own `.cursor` fixture (rules, skills, and MCP) in the system temp directory, so it passes on
@@ -264,6 +266,7 @@ registration, which showed up as a 404 after a restart. Keep that form if you ch
 | `cordis.patch.yml` | Bundle patch: inserts the `dsh-cursor-rules` row |
 | `locale/{en,zh}.json` | Plugin Manager title, description, and detail document |
 | `test/smoke.mjs` | Portable smoke test (70 assertions) over a self-built fixture |
+| `test/host.mjs` | Host wiring test: stubs the platform packages, then drives `apply()` — routes, `cursor_skill`, toggles, MCP mount, injection |
 
 ## Credits
 

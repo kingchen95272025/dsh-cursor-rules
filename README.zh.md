@@ -173,7 +173,9 @@ The following Cursor skills (.cursor/skills) are available. When a task matches 
 ## 验证
 
 ```sh
-npm test          # 70 项断言：frontmatter、glob、发现、选择、注入计划、JSONC、MCP、技能目录、开关
+npm test            # 70 项断言 + 宿主接线测试
+npm run test:rules  # 只跑数据层：frontmatter、glob、发现、选择、注入计划、JSONC、MCP、技能目录、开关
+npm run test:host   # 只跑宿主接线：路由、cursor_skill 工具、状态文件、MCP 挂载、注入时序
 ```
 
 测试自己在系统临时目录里搭 `.cursor` fixture（规则 / 技能 / MCP 各一组），因此在任何机器上都能跑通，不依赖真实仓库。
@@ -213,6 +215,7 @@ input={"root": "main"}                # 期望注册了 "cursor-rules" 这个 ke
 | `cordis.patch.yml` | bundle patch：插入 `dsh-cursor-rules` 行 |
 | `locale/{en,zh}.json` | Plugin Manager 的标题、描述与详情文档 |
 | `test/smoke.mjs` | 自带 fixture 的可移植冒烟测试（70 项断言） |
+| `test/host.mjs` | 宿主接线测试：把平台包换成桩，再驱动 `apply()`，验证路由 / `cursor_skill` / 开关 / MCP 挂载 / 注入时序 |
 
 ### 宿主侧注入时序
 
