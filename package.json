@@ -1,7 +1,7 @@
 {
   "name": "dsh-cursor-rules",
-  "version": "1.2.0",
-  "description": "Loads Cursor .mdc rules into the DeepSeek Harness agent context and adds a rules panel to the Web GUI.",
+  "version": "2.0.0",
+  "description": "Brings Cursor rules, skills and MCP servers (.cursor) into DeepSeek Harness: injects .mdc rules and a skill catalog into the agent context, exposes a cursor_skill tool, and connects .cursor/mcp.json servers on demand.",
   "type": "module",
   "main": "lib/index.js",
   "exports": {
@@ -40,13 +40,18 @@
     "@deepseek-ai/dsh-llm": ">=0.2.0-rc.2 || >=0.2.1-rc.2 || >=0.2.2-rc.1",
     "@deepseek-ai/dsh-client-ui-primitives": ">=0.2.0-rc.2 || >=0.2.1-rc.2 || >=0.2.2-rc.1",
     "@deepseek-ai/schemastery": "^3.18.2 || >=3.18.6-alpha.2 <4.0.0",
-    "react": "^18.3.1"
+    "react": "^18.3.1",
+    "@deepseek-ai/dsh-tools": ">=0.2.0-rc.2 || >=0.2.1-rc.2 || >=0.2.2-rc.1",
+    "@deepseek-ai/dsh-mcp-client": ">=0.2.0-rc.2 || >=0.2.1-rc.2 || >=0.2.2-rc.1"
   },
   "peerDependenciesMeta": {
     "@deepseek-ai/dsh-client-ui-primitives": {
       "optional": true
     },
     "react": {
+      "optional": true
+    },
+    "@deepseek-ai/dsh-mcp-client": {
       "optional": true
     }
   },
@@ -59,8 +64,11 @@
     "dsh-bundle",
     "cursor",
     "cursor-rules",
+    "cursor-skills",
+    "mcp",
     "mdc",
     "rules",
+    "skills",
     "context"
   ],
   "author": "kingchen95272025",

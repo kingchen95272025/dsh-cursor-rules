@@ -1,7 +1,7 @@
 {
   "meta": {
-    "title": "Cursor rules",
-    "description": "Loads the workspace's .cursor/rules/*.mdc files into the agent context with Cursor's four rule types, and adds a panel for reading and toggling them. Rules marked alwaysApply are injected at the start of a session; rules with globs are added after the agent reads or edits a matching file; rules with only a description are offered on demand. The files are read from disk, and the injected rules become part of the conversation sent to the model; nothing is uploaded. Turning the bundle off stops both the injection and the sidebar button.",
+    "title": "Cursor assets",
+    "description": "Loads the three asset types kept under .cursor into the agent: rules (.cursor/rules/*.mdc, following Cursor's four semantics — alwaysApply is injected when a session starts, globs rules are added once a matching file is read or edited, description-only rules go into an on-demand catalog), skills (.cursor/skills/*/SKILL.md, whose name and description form a catalog while the body is read on demand by the cursor_skill tool), and MCP servers (.cursor/mcp.json, JSONC allowed, mounted as MCP clients only when their switch is on — nothing starts by default). Everything is read from disk, and the injected part becomes part of the conversation sent to the model; env and header values are never shown, only their key names, and values are used solely to start the child process. The panel lives in the sidebar's Cursor rules page (Rules / MCP / Skills tabs) and in the matching settings section. Turning the bundle off stops the injection, the panel, and every mounted MCP connection.",
     "detail": "README.md"
   }
 }
