@@ -105,7 +105,7 @@ The following Cursor rules are available on demand. Read the rule file when the 
 
 - **左栏导航 → Cursor 规则**：`sidebar.panellist` 的行（同一 id 寻址 `main` 座位的整页），列出全部规则、类型标签、globs、描述与开关。
 - **设置面板 → Cursor 规则**：同一套列表以分节形式复用。
-- 点「查看」会按需拉取该规则的完整正文并渲染 Markdown。
+- 点「查看」在该行下方就地展开完整正文（渲染 Markdown，再点「收起」收回），不打断当前浏览位置。
 - 关闭某条规则后，它不再进入注入集合（Always 与 Auto 都受影响）。
 
 ## 验证

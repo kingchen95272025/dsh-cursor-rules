@@ -87,9 +87,9 @@ Rule switches are stored in `$DSH_HOME/cursor-rules.json`:
 
 ## Using the panel
 
-- **Sidebar bottom button** — opens a panel listing every rule with its type tag, globs, description, and switch.
+- **Sidebar panel entry** — opens a full-page list of every rule with its type tag, globs, description, and switch.
 - **Settings → Cursor rules** — the same list as a full page.
-- **View** fetches a single rule's full body on demand and renders it as Markdown.
+- **View** expands the rule's full body inline, right under its row (Markdown, collapsible), so the list position is kept.
 - Turning a rule off removes it from the injected set (Always and Auto Attached alike).
 
 ## How injection works
